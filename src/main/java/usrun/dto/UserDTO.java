@@ -3,7 +3,6 @@ package usrun.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import usrun.model.Team;
 
 /**
  * @author phuctt4
@@ -12,11 +11,8 @@ import usrun.model.Team;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamDTO {
-
-  private Long teamId;
-
-  private String teamName;
-
-  private String thumbnail;
+public class UserDTO {
+  private long userId;
+  private String displayName;
+  private String avatar;
 }

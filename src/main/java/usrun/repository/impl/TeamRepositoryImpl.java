@@ -1,16 +1,13 @@
 package usrun.repository.impl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import usrun.model.Team;
-import usrun.model.type.TeamMemberType;
 import usrun.dto.TeamDTO;
+import usrun.model.Team;
 import usrun.repository.TeamRepository;
 
 @Slf4j
@@ -28,7 +25,14 @@ public class TeamRepositoryImpl implements TeamRepository {
   public List<Team> findAllTeam() {
     MapSqlParameterSource params = new MapSqlParameterSource();
     String sql = "SELECT * FROM team";
-    return getTeamsSQLParamMap(sql, params);
+    return getTeams(sql, params);
+  }
+
+  @Override
+  public List<TeamDTO> findAllTeamDTO() {
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    String sql = "SELECT teamId, teamName, thumbnail FROM team";
+    return getTeamDTOs(sql, params);
   }
 
   private MapSqlParameterSource mapTeamObject(Team toMap) {
@@ -49,32 +53,7 @@ public class TeamRepositoryImpl implements TeamRepository {
     return toReturn;
   }
 
-  private Set<Team> getMultipleTeamSQLParamMap(String sql, MapSqlParameterSource params) {
-    return namedParameterJdbcTemplate.query(sql, params, rs -> {
-          Set<Team> set = new HashSet<Team>();
-          while (rs.next()) {
-            Team team = new Team(
-                rs.getLong("teamId"),
-                rs.getInt("privacy"),
-                rs.getInt("totalMember"),
-                rs.getString("teamName"),
-                rs.getString("thumbnail"),
-                rs.getString("banner"),
-                rs.getBoolean("verified"),
-                rs.getBoolean("deleted"),
-                rs.getDate("createTime"),
-                rs.getInt("province"),
-                rs.getString("description")
-            );
-
-            set.add(team);
-          }
-          return set;
-        }
-    );
-  }
-
-  private List<Team> getTeamsSQLParamMap(String sql, MapSqlParameterSource params) {
+  private List<Team> getTeams(String sql, MapSqlParameterSource params) {
     return namedParameterJdbcTemplate.query(
         sql,
         params,
@@ -93,28 +72,19 @@ public class TeamRepositoryImpl implements TeamRepository {
         ));
   }
 
-  private List<TeamDTO> getTeamDTOsSQLParamMap(String sql, MapSqlParameterSource params) {
+  private List<TeamDTO> getTeamDTOs(String sql, MapSqlParameterSource params) {
     return namedParameterJdbcTemplate.query(
         sql,
         params,
         (rs, i) -> new TeamDTO(
             rs.getLong("teamId"),
-            rs.getInt("privacy"),
-            rs.getInt("totalMember"),
             rs.getString("teamName"),
-            rs.getString("thumbnail"),
-            rs.getString("banner"),
-            rs.getBoolean("verified"),
-            rs.getBoolean("deleted"),
-            rs.getDate("createTime"),
-            rs.getInt("province"),
-            rs.getString("description"),
-            TeamMemberType.fromInt(rs.getInt("teamMemberType"))
+            rs.getString("thumbnail")
         ));
   }
 
-  private Team getTeamSQLParamMap(String sql, MapSqlParameterSource params) {
-    Optional<Team> toReturn = getTeamsSQLParamMap(sql, params).stream().findFirst();
+  private Team getTeam(String sql, MapSqlParameterSource params) {
+    Optional<Team> toReturn = getTeams(sql, params).stream().findFirst();
 
     if (toReturn.isPresent()) {
       if (toReturn.get().isDeleted()) {

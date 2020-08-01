@@ -1,4 +1,4 @@
-package usrun.config.cache;
+package usrun.config;
 
 import lombok.Getter;
 import lombok.Setter;
