@@ -55,8 +55,8 @@ public class UserActivityRepositoryImpl implements UserActivityRepository {
         rs.getLong("userId"),
         rs.getLong("totalDistance"),
         rs.getLong("totalTime"),
-        rs.getLong("maxDistance"),
         rs.getLong("maxTime"),
+        rs.getLong("maxDistance"),
         rs.getLong("userActivityCount")
     ));
   }
